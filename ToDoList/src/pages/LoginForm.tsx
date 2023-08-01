@@ -4,7 +4,8 @@ import {
   Input,
   Button,
   Box,
-  Text
+  Text,
+  Spinner
 } from "@chakra-ui/react";
 import {useForm} from "react-hook-form";
 import {z} from "zod";
@@ -12,6 +13,7 @@ import {zodResolver} from "@hookform/resolvers/zod";
 import axios from "axios";
 import {Link, useNavigate} from "react-router-dom";
 import {useCookies} from "react-cookie";
+import {useState} from "react";
 
 export type UserData = {
   id: number;
@@ -23,14 +25,15 @@ interface LoginFormProps {
   setIsAuthenticated: (value: boolean) => void;
   setUser: (user: UserData) => void;
 }
-
 const LoginForm = ({setIsAuthenticated, setUser}: LoginFormProps) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [_UserToken, setUserToken] = useCookies();
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
   // Login
   const handleLogin = (data: FormData) => {
+    setLoading(true);
     axios
       .post(
         "https://api-rest-todolist-4b99865c33b9.herokuapp.com/api/login",
@@ -45,7 +48,10 @@ const LoginForm = ({setIsAuthenticated, setUser}: LoginFormProps) => {
         setUserToken("token", token);
         navigate("/dashboard");
       })
-      .catch(err => console.log("Erreur lors de la connexion", err));
+      .catch(err => console.log("Erreur lors de la connexion", err))
+      .finally(() => {
+        setLoading(false);
+      });
   };
 
   // zod object
@@ -85,46 +91,75 @@ const LoginForm = ({setIsAuthenticated, setUser}: LoginFormProps) => {
         display="flex"
         justifyContent="space-evenly"
         alignItems="center">
-          <Box>
-            <Text fontSize={"8xl"} fontWeight={"bold"} color={"white"}>It is time<br/><Box color="#7cf49a">ToDo.</Box></Text>
-          </Box>
-        <form onSubmit={handleSubmit(handleLogin)}>
-          <FormControl width="300px" color={"#7cf49a"}>
-            <FormLabel>Username</FormLabel>
-            <Input id="username" type="text" {...register("username")} variant={"flushed"} />
-            {errors.username && (
-              <Text
-                as={"i"}
-                fontSize={"xs"}
-                className="text-danger"
-                color={"tomato"}>
-                {errors.username.message}
+        {loading ? (
+          <Spinner size={"xl"} color="#7cf49a" />
+        ) : (
+          <>
+            <Box>
+              <Text fontSize={"8xl"} fontWeight={"bold"} color={"white"}>
+                It is time
+                <br />
+                <span color="#7cf49a">ToDo.</span>
               </Text>
-            )}
-            <FormLabel mt={2}>Password</FormLabel>
-            <Input id="password" type="password" {...register("password")} variant={"flushed"}/>
-            {errors.password && (
-              <Text
-                as={"i"}
-                fontSize={"xs"}
-                className="text-danger"
-                color={"tomato"}>
-                {errors.password.message}
-              </Text>
-            )}
-            <Box
-              display={"flex"}
-              justifyContent={"space-between"}
-              alignItems={"center"}>
-              <Button backgroundColor="#141E30" type="submit" marginTop="3" color={"#7cf49a"} _hover={{backgroundColor:"#243B55"}} >
-                Login
-              </Button>
-              <Button colorScheme="teal" marginTop="3" color={"#7cf49a"}  variant='link'>
-                <Link to={"/register"}>register</Link>
-              </Button>
             </Box>
-          </FormControl>
-        </form>
+            <form onSubmit={handleSubmit(handleLogin)}>
+              <FormControl width="300px" color={"#7cf49a"}>
+                <FormLabel>Username</FormLabel>
+                <Input
+                  id="username"
+                  type="text"
+                  {...register("username")}
+                  variant={"flushed"}
+                />
+                {errors.username && (
+                  <Text
+                    as={"i"}
+                    fontSize={"xs"}
+                    className="text-danger"
+                    color={"tomato"}>
+                    {errors.username.message}
+                  </Text>
+                )}
+                <FormLabel mt={2}>Password</FormLabel>
+                <Input
+                  id="password"
+                  type="password"
+                  {...register("password")}
+                  variant={"flushed"}
+                />
+                {errors.password && (
+                  <Text
+                    as={"i"}
+                    fontSize={"xs"}
+                    className="text-danger"
+                    color={"tomato"}>
+                    {errors.password.message}
+                  </Text>
+                )}
+                <Box
+                  display={"flex"}
+                  justifyContent={"space-between"}
+                  alignItems={"center"}>
+                  <Button
+                    backgroundColor="#141E30"
+                    type="submit"
+                    marginTop="3"
+                    color={"#7cf49a"}
+                    _hover={{backgroundColor: "#243B55"}}>
+                    Login
+                  </Button>
+                  <Button
+                    colorScheme="teal"
+                    marginTop="3"
+                    color={"#7cf49a"}
+                    variant="link">
+                    <Link to={"/register"}>register</Link>
+                  </Button>
+                </Box>
+              </FormControl>
+            </form>
+          </>
+        )}
       </Box>
     </>
   );

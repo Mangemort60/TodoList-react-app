@@ -15,7 +15,7 @@ import {zodResolver} from "@hookform/resolvers/zod";
 import axios from "axios";
 import {useCookies} from "react-cookie";
 import {Dispatch, SetStateAction, useEffect} from "react";
-import { AddIcon, DeleteIcon } from "@chakra-ui/icons";
+import {AddIcon, DeleteIcon} from "@chakra-ui/icons";
 
 export type TaskType = {
   id: number;
@@ -116,26 +116,42 @@ const Tasks = ({selectedListId, tasks, setTasks}: TasksProps) => {
   });
   return (
     <>
-      <Flex direction={"column"}  maxWidth={"50rem"} >
+      <Flex direction={"column"} maxWidth={"50rem"}>
         <form onSubmit={handleSubmit(handleCreate)}>
           <FormControl width={"15rem"} color={"#7cf49a"}>
-            <FormLabel color={"#7cf49a"} fontSize='xl'>Tâches</FormLabel>
-              {errors.taskTitle && (
-                <Text
-                  as={"i"}
-                  fontSize={"xs"}
-                  className="text-danger"
-                  color={"tomato"}>
-                  {errors.taskTitle.message}
-                </Text>
-              )}
-              <Flex>
-                <Input type="text" id="taskTitle" {...register("taskTitle")} variant={"flushed"} focusBorderColor="#7cf49a" placeholder="Titre de la tâche"/>
-                <Button type="submit" variant='ghost'><AddIcon boxSize={3} color={"#7cf49a"}/></Button>
-              </Flex>
+            <FormLabel color={"#7cf49a"} fontSize="xl">
+              Tâches
+            </FormLabel>
+            {errors.taskTitle && (
+              <Text
+                as={"i"}
+                fontSize={"xs"}
+                className="text-danger"
+                color={"tomato"}>
+                {errors.taskTitle.message}
+              </Text>
+            )}
+            <Flex>
+              <Input
+                type="text"
+                id="taskTitle"
+                {...register("taskTitle")}
+                variant={"flushed"}
+                focusBorderColor="#7cf49a"
+                placeholder="Titre de la tâche"
+              />
+              <Button type="submit" variant="ghost">
+                <AddIcon boxSize={3} color={"#7cf49a"} />
+              </Button>
+            </Flex>
           </FormControl>
         </form>
-        <Box boxShadow='lg' rounded='md' backgroundColor={"#243B55"} color={"white"} marginTop={"1rem"}>
+        <Box
+          boxShadow="lg"
+          rounded="md"
+          backgroundColor={"#243B55"}
+          color={"white"}
+          marginTop={"1rem"}>
           <UnorderedList listStyleType={"none"}>
             {selectedListId ? (
               tasks.length === 0 ? (
@@ -144,8 +160,14 @@ const Tasks = ({selectedListId, tasks, setTasks}: TasksProps) => {
                 // Mappez les tâches
                 tasks.map(task => (
                   <Flex justifyContent={"space-between"} key={task.id}>
-                    <ListItem mt={2}>{task.taskTitle}</ListItem>
-                    <Button onClick={() => HandleDelete(task.id)} variant='ghost' ><DeleteIcon color={"gray.400"}/></Button>
+                    <ListItem key={task.id} mt={2}>
+                      {task.taskTitle}
+                    </ListItem>
+                    <Button
+                      onClick={() => HandleDelete(task.id)}
+                      variant="ghost">
+                      <DeleteIcon color={"gray.400"} />
+                    </Button>
                   </Flex>
                 ))
               )
