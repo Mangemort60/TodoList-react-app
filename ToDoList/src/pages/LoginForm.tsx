@@ -99,7 +99,7 @@ const LoginForm = ({setIsAuthenticated, setUser}: LoginFormProps) => {
               <Text fontSize={"8xl"} fontWeight={"bold"} color={"white"}>
                 It is time
                 <br />
-                <span color="#7cf49a">ToDo.</span>
+                <Text color="#7cf49a">ToDo.</Text>
               </Text>
             </Box>
             <form onSubmit={handleSubmit(handleLogin)}>

@@ -20,14 +20,14 @@ import {useCookies} from "react-cookie";
 import {useEffect, useState} from "react";
 import Tasks from "./Tasks";
 import {TaskType} from "./Tasks";
-import { AddIcon, DeleteIcon } from "@chakra-ui/icons";
+import {AddIcon, DeleteIcon} from "@chakra-ui/icons";
 
 export interface ListsProps {
   user: UserData | undefined;
 }
 
 type ListsTypes = {
-  id: number ;
+  id: number;
   listTitle: string;
   UserId: string;
 };
@@ -123,37 +123,64 @@ const Lists = () => {
   });
 
   return (
-    <Grid templateColumns="repeat(3, 1fr)" gap={6} width={"50%"} margin={"auto"}>
+    <Grid
+      templateColumns="repeat(3, 1fr)"
+      gap={6}
+      width={"50%"}
+      margin={"auto"}>
       <GridItem w="100%" h="10" colSpan={1}>
         <Flex direction={"column"} maxWidth={"25rem"}>
           <form onSubmit={handleSubmit(handleCreate)}>
             <FormControl width={"15rem"} color={"#7cf49a"}>
-              <FormLabel fontSize='xl'>Listes</FormLabel>
-                {errors.listTitle && (
-                  <Text
-                    as={"i"}
-                    fontSize={"xs"}
-                    className="text-danger"
-                    color={"tomato"}>
-                    {errors.listTitle.message}
-                  </Text>
-                )}
-                <Flex width={"100%"} >
-                  <Input variant={"flushed"} focusBorderColor="#7cf49a" type="text" id="listTitle" {...register("listTitle")}  placeholder="Titre de la liste"/>
-                  <Button type="submit" variant='ghost' ><AddIcon boxSize={3} color={"#7cf49a"}/></Button>
-                </Flex>
+              <FormLabel fontSize="xl">Listes</FormLabel>
+              {errors.listTitle && (
+                <Text
+                  as={"i"}
+                  fontSize={"xs"}
+                  className="text-danger"
+                  color={"tomato"}>
+                  {errors.listTitle.message}
+                </Text>
+              )}
+              <Flex width={"100%"}>
+                <Input
+                  variant={"flushed"}
+                  focusBorderColor="#7cf49a"
+                  type="text"
+                  id="listTitle"
+                  {...register("listTitle")}
+                  placeholder="Titre de la liste"
+                />
+                <Button type="submit" variant="ghost">
+                  <AddIcon boxSize={3} color={"#7cf49a"} />
+                </Button>
+              </Flex>
             </FormControl>
           </form>
-          <Box boxShadow='lg' rounded='md' bg='white' marginTop={"1rem"} backgroundColor={"#243B55"} color={"white"}>
+          <Box
+            boxShadow="lg"
+            rounded="md"
+            bg="white"
+            marginTop={"1rem"}
+            backgroundColor={"#243B55"}
+            color={"white"}>
             <UnorderedList listStyleType={"none"} m={0}>
               {lists.map(list => (
-                <Flex justifyContent={"space-between"} _hover={{backgroundColor: "gray.100", color:"black"}} >
+                <Flex
+                  justifyContent={"space-between"}
+                  _hover={{backgroundColor: "gray.100", color: "black"}}>
                   <ListItem
                     key={list.id}
-                    onClick={() => setSelectedListId(list.id)} cursor={"pointer"} mt={2} width={"80%"} paddingStart={2} >
+                    onClick={() => setSelectedListId(list.id)}
+                    cursor={"pointer"}
+                    mt={2}
+                    width={"80%"}
+                    paddingStart={2}>
                     {list.listTitle}
                   </ListItem>
-                  <Button onClick={() => HandleDelete(list.id)} variant='ghost'><DeleteIcon color={"gray.400"} cursor={"pointer"}/></Button>
+                  <Button onClick={() => HandleDelete(list.id)} variant="ghost">
+                    <DeleteIcon color={"gray.400"} cursor={"pointer"} />
+                  </Button>
                 </Flex>
               ))}
             </UnorderedList>
