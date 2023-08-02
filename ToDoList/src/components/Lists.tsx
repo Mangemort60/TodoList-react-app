@@ -168,7 +168,10 @@ const Lists = () => {
               {lists.map(list => (
                 <Flex
                   justifyContent={"space-between"}
-                  _hover={{backgroundColor: "gray.100", color: "black"}}>
+                  backgroundColor={
+                    selectedListId === list.id ? "#182438" : "#243B55"
+                  }
+                  _hover={{backgroundColor: "#20334b", color: "white"}}>
                   <ListItem
                     key={list.id}
                     onClick={() => setSelectedListId(list.id)}
