@@ -8,8 +8,16 @@ import {
   GridItem,
   Input,
   ListItem,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
   Text,
-  UnorderedList
+  UnorderedList,
+  useDisclosure
 } from "@chakra-ui/react";
 import {useForm} from "react-hook-form";
 import {z} from "zod";
@@ -20,7 +28,7 @@ import {useCookies} from "react-cookie";
 import {useEffect, useState} from "react";
 import Tasks from "./Tasks";
 import {TaskType} from "./Tasks";
-import {AddIcon, DeleteIcon} from "@chakra-ui/icons";
+import {AddIcon, DeleteIcon, EditIcon} from "@chakra-ui/icons";
 
 export interface ListsProps {
   user: UserData | undefined;
@@ -39,9 +47,11 @@ const Lists = () => {
   const [selectedListId, setSelectedListId] = useState<number>(0);
   const [tasks, setTasks] = useState<TaskType[]>([]);
   const userId = localStorage.getItem("user");
-  console.log("les listes", lists);
+  const {isOpen, onOpen, onClose} = useDisclosure();
 
   const handleCreate = (data: FormData) => {
+    console.log("handleCreate");
+
     const newList = {
       listTitle: data.listTitle || "Nouvelle liste"
     };
@@ -56,7 +66,6 @@ const Lists = () => {
         }
       )
       .then(response => {
-        console.log("la liste a bien été crée ", response.data);
         const createdList = response.data.data;
         setLists(prevLists => [...prevLists, createdList]);
       })
@@ -87,6 +96,8 @@ const Lists = () => {
   }, []);
 
   const HandleDelete = (id: number) => {
+    console.log("handleCreate");
+
     axios
       .delete(
         `https://api-rest-todolist-4b99865c33b9.herokuapp.com/api/lists/${id}`,
@@ -108,11 +119,47 @@ const Lists = () => {
       });
   };
 
+  const handleUpdate = (id: number, data: FormData2) => {
+    console.log(data);
+
+    const updatedListTitle = {
+      listTitle: data.editedListTitle
+    };
+    axios
+      .put(
+        `https://api-rest-todolist-4b99865c33b9.herokuapp.com/api/lists/${id}`,
+        updatedListTitle,
+        {
+          headers: {
+            Authorization: `Bearer ${UserToken.token}` // Ajoutez le token dans l'en-tête
+          }
+        }
+      )
+      .then(res => {
+        console.log("la liste a bien été edité", res.data.date);
+        setLists(prevLists =>
+          prevLists.map(list =>
+            list.id === id ? {...list, ...res.data.date} : list
+          )
+        );
+      })
+      .catch(err => {
+        console.log(err);
+      });
+    reset2();
+  };
+
   const schema = z.object({
     listTitle: z.string().max(15)
   });
 
+  const schema2 = z.object({
+    editedListTitle: z.string().max(15)
+  });
+
   type FormData = z.infer<typeof schema>;
+  type FormData2 = z.infer<typeof schema2>;
+
   const {
     register,
     handleSubmit,
@@ -120,6 +167,14 @@ const Lists = () => {
     formState: {errors}
   } = useForm<FormData>({
     resolver: zodResolver(schema)
+  });
+
+  const {
+    register: register2,
+    handleSubmit: handleSubmit2,
+    reset: reset2
+  } = useForm<FormData2>({
+    resolver: zodResolver(schema2)
   });
 
   return (
@@ -181,6 +236,14 @@ const Lists = () => {
                     paddingStart={2}>
                     {list.listTitle}
                   </ListItem>
+                  <Button
+                    variant={"ghost"}
+                    onClick={() => {
+                      onOpen();
+                      setSelectedListId(list.id);
+                    }}>
+                    <EditIcon color={"gray.400"} />
+                  </Button>
                   <Button onClick={() => HandleDelete(list.id)} variant="ghost">
                     <DeleteIcon color={"gray.400"} cursor={"pointer"} />
                   </Button>
@@ -188,6 +251,38 @@ const Lists = () => {
               ))}
             </UnorderedList>
           </Box>
+          <Modal isOpen={isOpen} onClose={onClose}>
+            <form
+              onSubmit={handleSubmit2(data =>
+                handleUpdate(selectedListId, data)
+              )}>
+              <ModalOverlay />
+              <ModalContent>
+                <ModalHeader>Editez votre liste</ModalHeader>
+                <ModalCloseButton />
+                <ModalBody pb={6}>
+                  <FormControl>
+                    <FormLabel>Nouveau titre</FormLabel>
+                    <Input
+                      placeholder="Nouveau titre..."
+                      id="editedListTitle"
+                      {...register2("editedListTitle")}
+                    />
+                  </FormControl>
+                </ModalBody>
+                <ModalFooter>
+                  <Button
+                    type="submit"
+                    onClick={onClose}
+                    colorScheme="blue"
+                    mr={3}>
+                    Valider
+                  </Button>
+                  <Button onClick={onClose}>Annuler</Button>
+                </ModalFooter>
+              </ModalContent>
+            </form>
+          </Modal>
         </Flex>
       </GridItem>
       <GridItem w="100%" h="100" colSpan={2}>
