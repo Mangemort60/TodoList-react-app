@@ -257,7 +257,10 @@ const Lists = () => {
                 handleUpdate(selectedListId, data)
               )}>
               <ModalOverlay />
-              <ModalContent>
+              <ModalContent
+                margin={"auto"}
+                backgroundColor={"#182438"}
+                color={"#7cf49a"}>
                 <ModalHeader>Editez votre liste</ModalHeader>
                 <ModalCloseButton />
                 <ModalBody pb={6}>
@@ -267,6 +270,7 @@ const Lists = () => {
                       placeholder="Nouveau titre..."
                       id="editedListTitle"
                       {...register2("editedListTitle")}
+                      variant={"flushed"}
                     />
                   </FormControl>
                 </ModalBody>
@@ -275,10 +279,19 @@ const Lists = () => {
                     type="submit"
                     onClick={onClose}
                     colorScheme="blue"
-                    mr={3}>
+                    mr={3}
+                    color={"#7cf49a"}
+                    _hover={{backgroundColor: "#243B55"}}
+                    backgroundColor="#141E30">
                     Valider
                   </Button>
-                  <Button onClick={onClose}>Annuler</Button>
+                  <Button
+                    onClick={onClose}
+                    colorScheme="teal"
+                    color={"#fff"}
+                    variant="link">
+                    Annuler
+                  </Button>
                 </ModalFooter>
               </ModalContent>
             </form>
